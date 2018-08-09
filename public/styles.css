@@ -1,0 +1,16 @@
+* {
+	box-sizing: border-box;
+}
+
+.aTile {
+	background-color: gray;
+	float: left;
+	text-align: center;
+	font-size: 40px;
+	border: 1px solid black;
+}
+
+#grid {
+	width: 500px;
+	-moz-user-select: none;
+}
