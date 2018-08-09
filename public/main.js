@@ -2,39 +2,53 @@ $(document).ready(() => {
 
 	var board = [];
 	var boardSize = 9;
-	var tileWidth = Math.floor($('#grid').width() / boardSize) - 2;
 	var finished= false;
 	var diff;
 	var bombCount = 0;
+	var bombTotal = $('#difficulty').val();
 
-	function decideIfBomb() {
-		if (Math.ceil(Math.random() * diff) == 1) {
-			bombCount++;
-			return true;
+	function setBombs() {
+		while(bombCount < bombTotal) {
+			var x = Math.floor(Math.random() * boardSize);
+			var y = Math.floor(Math.random() * boardSize);	
+			if (!board[x][y].isBomb) {
+				board[x][y].isBomb = true;
+				bombCount++;
+			}
 		}
 	}
 
 	function tile(x,y) {
 		this.xPos = x;
 		this.yPos = y;
-		this.isBomb = decideIfBomb();
+		this.isBomb = false;
 		this.num = 0;
 		this.isChecked = false;
+		this.isFlagged = false;
 		this.element = $('<div class="aTile"></div>');
-		this.element.height(tileWidth);
-		this.element.width(tileWidth);
 		$("#grid").append(this.element);
 		
 		this.element.on("click", () => {
-			checkTile(this);
-			if(checkWonGame() && !finished) {
-				gameWon();
+			if(!finished && !this.isFlagged){
+				checkTile(this);
+				if(checkWonGame() && !finished) {
+					gameWon();
+				}
 			}
 		});
 
 		this.element.on("contextmenu", (e) => {
-			this.element.text("^");
 			e.preventDefault();
+			if(!finished && !this.isChecked){
+				this.isFlagged = !this.isFlagged;
+				if(this.isFlagged) {
+					this.element.text("^");	
+					bombCount--;
+				} else {
+					this.element.text("");	
+					bombCount++;
+				}
+			}
 		});
 		
 	}
@@ -75,12 +89,14 @@ $(document).ready(() => {
 		$(document.documentElement).append($('<p class="ending">You Lose</p>'));
 		finished = true;
 		$('.aTile').css({backgroundColor: 'red'});
+		showBoard();
 	}
 
 	function gameWon() {
 		$(document.documentElement).append($('<p class="ending">You Win!</p>'));
 		finished = true;
 		$('.aTile').css({backgroundColor: 'green'});
+		showBoard();
 	}
 
 	function checkTile(tile) {
@@ -117,22 +133,32 @@ $(document).ready(() => {
 		return answer;
 	}
 
+	function showBoard() {
+		for(var i = 0; i < boardSize; i++) {
+			for(var j = 0; j < boardSize; j++) {
+				checkTile(board[i][j]);
+			}
+		}
+	}
+
 	function setBoard(size) {
-		diff = $("#difficulty").val();
+		diff = $("#difficulty").val();		
 		for(i = 0; i < size; i++) {
 			board[i] = [];
 			for(j = 0; j < size; j++) {
 				board[i][j] = new tile(i,j);			
 			}
 		}
+		$("#grid").width((boardSize + 1) * $('.aTile').width());
+		setBombs();
 		setNumAll();
-		console.log(diff);
 		$('#mineCount').text('Mine Count: ' + bombCount);
 	}
 
 	setBoard(boardSize);
 
 	$("#reset").on("click", () => {
+		bombTotal = $('#difficulty').val();
 		bombCount = 0;
 		$('.aTile').remove();
 		$('.ending').remove();
@@ -142,11 +168,7 @@ $(document).ready(() => {
 	});
 
 	$("#show").on("click", () => {
-		for(var i = 0; i < boardSize; i++) {
-			for(var j = 0; j < boardSize; j++) {
-				checkTile(board[i][j]);
-			}
-		}
+		showBoard();
 	});
 
 
