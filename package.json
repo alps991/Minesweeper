@@ -7,8 +7,16 @@
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alps991/Minesweeper.git"
+  },
   "author": "Alper Donmez",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alps991/Minesweeper/issues"
+  },
+  "homepage": "https://github.com/alps991/Minesweeper#readme",
   "keywords": [
     "static",
     "server",
