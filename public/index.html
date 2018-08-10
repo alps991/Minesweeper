@@ -6,22 +6,24 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Play Minesweeper</title>
-	<link rel="stylesheet" type="text/css" href="styles.css"></style>
+	<link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 
 <body>
-	<h1>Minesweeper</h1>	
+	<h1>Minesweeper</h1>
 	<div id="grid"></div>
 	<div id="controls">
 		<button id="reset">Reset</button>
 		<button id="show">Show Board</button>
-		<input id="difficulty" type="number" value="10">
+		<input id="difficulty" type="text" value="10">
 		<select>
-			<option value="volvo">Small</option>
-			<option value="saab">Medium</option>
-			<option value="mercedes">Large</option>
-		</select> 
-		<p id="mineCount"></p>
+			<option value="">Small</option>
+			<option value="">Medium</option>
+			<option value="">Large</option>
+		</select>
+		<p>Remaining Mines:
+			<span id="mineCount"></span>
+		</p>
 	</div>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
