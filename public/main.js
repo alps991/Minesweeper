@@ -178,6 +178,6 @@ $(document).ready(() => {
 	$("#difficulty").on("input", (e) => {
 		e.target.value = e.target.value.replace(/\D/g, '');
 	});
-.
+
 
 });
