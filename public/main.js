@@ -1,15 +1,16 @@
 $(document).ready(() => {
 
 	var board = [];
-	var boardSize = 9;
+	var boardWidth = 9;
+	var boardHeight = 9;
 	var finished = false;
 	var bombCount = 0;
 	var bombTotal = 10;
 
 	function setBombs() {
 		while (bombCount < bombTotal) {
-			var x = Math.floor(Math.random() * boardSize);
-			var y = Math.floor(Math.random() * boardSize);
+			var y = Math.floor(Math.random() * boardWidth);
+			var x = Math.floor(Math.random() * boardHeight);
 			if (!board[x][y].isBomb) {
 				board[x][y].isBomb = true;
 				bombCount++;
@@ -54,8 +55,8 @@ $(document).ready(() => {
 	}
 
 	function checkWonGame() {
-		for (var i = 0; i < boardSize; i++) {
-			for (var j = 0; j < boardSize; j++) {
+		for (var i = 0; i < board.length; i++) {
+			for (var j = 0; j < board[0].length; j++) {
 				if (!board[i][j].isBomb && !board[i][j].isChecked) {
 					return false;
 				}
@@ -79,7 +80,7 @@ $(document).ready(() => {
 
 	function setNumAll() {
 		for (i = 0; i < board.length; i++) {
-			for (j = 0; j < board.length; j++) {
+			for (j = 0; j < board[0].length; j++) {
 				board[i][j].num = countBorderingMines(i, j);
 			}
 		}
@@ -124,7 +125,7 @@ $(document).ready(() => {
 		answer = [];
 		for (k = tile.xPos - 1; k <= tile.xPos + 1; k++) {
 			for (l = tile.yPos - 1; l <= tile.yPos + 1; l++) {
-				if (k >= 0 && k < boardSize && l >= 0 && l < boardSize) {
+				if (k >= 0 && k < board.length && l >= 0 && l < board[0].length) {
 					if (!(tile.xPos == k && tile.yPos == l)) {
 						answer.push(board[k][l]);
 					}
@@ -135,49 +136,78 @@ $(document).ready(() => {
 	}
 
 	function showBoard() {
-		for (var i = 0; i < boardSize; i++) {
-			for (var j = 0; j < boardSize; j++) {
+		for (var i = 0; i < board.length; i++) {
+			for (var j = 0; j < board[0].length; j++) {
 				checkTile(board[i][j]);
 			}
 		}
 	}
 
-	function setBoard(size) {
+	function setBoard() {
 		diff = $("#difficulty").val();
-		for (i = 0; i < size; i++) {
+		for (i = 0; i < boardHeight; i++) {
 			board[i] = [];
-			for (j = 0; j < size; j++) {
+			for (j = 0; j < boardWidth; j++) {
 				board[i][j] = new tile(i, j);
 			}
 		}
-		$("#grid").width((boardSize + 1) * $('.aTile').width());
+		$("#grid").width(boardWidth * ($('.aTile').width() + 2));
 		setBombs();
 		setNumAll();
 		$('#mineCount').text(bombCount);
 	}
 
-	setBoard(boardSize);
+	setBoard();
 
 	$("#reset").on("click", () => {
 		let bombs = $('#difficulty').val();
-		if (bombs < boardSize * boardSize && bombs > 0) {
-			bombTotal = bombs;
-			bombCount = 0;
-			$('.aTile').remove();
-			$('.ending').remove();
-			setBoard(boardSize);
-			finished = false;
-			$('.aTile').css({ backgroundColor: 'gray' });
+		let bWidth = Number($('#board-width').val());
+		let bHeight = Number($('#board-height').val());
+
+		if (bWidth > 30) {
+			boardWidth = 30;
+			$('#board-width').val(30);
+		} else if (bWidth < 4) {
+			boardWidth = 4;
+			$('#board-width').val(4);
+		} else {
+			boardWidth = bWidth;
 		}
+
+		if (bHeight > 30) {
+			boardHeight = 30;
+			$('#board-height').val(30);
+		} else if (bHeight < 4) {
+			boardHeight = 4;
+			$('#board-height').val(4);
+		} else {
+			boardHeight = bHeight;
+		}
+
+		if (bombs > boardHeight * boardWidth) {
+			bombTotal = boardHeight * boardWidth;
+			$('#difficulty').val(bombTotal);
+		} else if (bombs < 1) {
+			bombTotal = 1;
+			$('#difficulty').val(1);
+		} else {
+			bombTotal = bombs;
+		}
+
+		bombCount = 0;
+		$('.aTile').remove();
+		$('.ending').remove();
+		setBoard();
+		finished = false;
+		$('.aTile').css({ backgroundColor: 'gray' });
 	});
 
 	$("#show").on("click", () => {
 		showBoard();
 	});
 
-	$("#difficulty").on("input", (e) => {
+	$(".num-input").on("input", (e) => {
 		e.target.value = e.target.value.replace(/\D/g, '');
 	});
-
 
 });

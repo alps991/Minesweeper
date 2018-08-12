@@ -15,12 +15,18 @@
 	<div id="controls">
 		<button id="reset">Reset</button>
 		<button id="show">Show Board</button>
-		<input id="difficulty" type="text" value="10">
-		<select>
-			<option value="">Small</option>
-			<option value="">Medium</option>
-			<option value="">Large</option>
-		</select>
+		<div>
+			Select Number of Mines:
+			<input class="num-input" id="difficulty" type="text" value="10">
+		</div>
+		<div>
+			Select Width of Board:
+			<input class="num-input" id="board-width" type="text" value="9">
+		</div>
+		<div>
+			Select Height of Board:
+			<input class="num-input" id="board-height" type="text" value="9">
+		</div>
 		<p>Remaining Mines:
 			<span id="mineCount"></span>
 		</p>
