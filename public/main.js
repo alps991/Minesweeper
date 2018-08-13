@@ -42,11 +42,11 @@ $(document).ready(() => {
 			if (!finished && !this.isChecked) {
 				this.isFlagged = !this.isFlagged;
 				if (this.isFlagged) {
-					this.element.text("^");
+					this.element.html("<img src='./images/flag.png'>");
 					bombCount--;
 					$('#mineCount').text(bombCount);
 				} else {
-					this.element.text("");
+					this.element.html("");
 					bombCount++;
 					$('#mineCount').text(bombCount);
 				}
@@ -104,7 +104,7 @@ $(document).ready(() => {
 	function checkTile(tile) {
 		tile.isChecked = true;
 		if (tile.isBomb) {
-			tile.element.text("*");
+			tile.element.html("<img src='./images/bomb.png'>");
 			if (!finished) {
 				gameOver();
 			}
@@ -208,6 +208,28 @@ $(document).ready(() => {
 
 	$(".num-input").on("input", (e) => {
 		e.target.value = e.target.value.replace(/\D/g, '');
+		$('#custom').prop("checked", true);
 	});
+
+	$("#mode-select").on("change", () => {
+		var mode = $('input[name="mode"]:checked', '#mode-select').val();
+		switch(mode) {
+			case 'beginner':
+				$('#difficulty').val(10);
+				$('#board-width').val(9);
+				$('#board-height').val(9);
+				break;
+			case 'intermediate':
+				$('#difficulty').val(40);
+				$('#board-width').val(16);
+				$('#board-height').val(16);
+				break;
+			case 'expert':
+				$('#difficulty').val(99);
+				$('#board-width').val(30);
+				$('#board-height').val(16);
+				break;
+		}
+	})
 
 });
