@@ -23,7 +23,7 @@
 		</form>
 		<div>
 			Select Number of Mines:
-			<input class="num-input" id="difficulty" type="text" value="10">
+			<input class="num-input" id="mine-set" type="text" value="10">
 		</div>
 		<div>
 			Select Width of Board:
@@ -33,11 +33,15 @@
 			Select Height of Board:
 			<input class="num-input" id="board-height" type="text" value="9">
 		</div>
-		<p>Remaining Mines:
-			<span id="mineCount"></span>
-		</p>
+		<div>
+			Remaining Mines: <span id="mineCount"></span>
+		</div>
+		<div>
+			Time: <span id="timer"></span>
+		</div>
 	</div>
 
+	<script src="../node_modules/moment/moment.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 	<script src='main.js'></script>
 </body>

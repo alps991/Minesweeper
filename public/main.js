@@ -6,12 +6,14 @@ $(document).ready(() => {
 	var finished = false;
 	var bombCount = 0;
 	var bombTotal = 10;
+	var firstCheck = true;
+	var startTime;
 
 	function setBombs() {
 		while (bombCount < bombTotal) {
 			var y = Math.floor(Math.random() * boardWidth);
 			var x = Math.floor(Math.random() * boardHeight);
-			if (!board[x][y].isBomb) {
+			if (!board[x][y].isBomb && !board[x][y].isChecked) {
 				board[x][y].isBomb = true;
 				bombCount++;
 			}
@@ -29,7 +31,14 @@ $(document).ready(() => {
 		$("#grid").append(this.element);
 
 		this.element.on("click", () => {
-			if (!finished && !this.isFlagged) {
+			if(firstCheck) {
+				this.isChecked = true;
+				setBombs();
+				setNumAll();
+				firstCheck = false;
+				startTime = moment();				
+			}
+			if(!finished && !this.isFlagged) {
 				checkTile(this);
 				if (checkWonGame() && !finished) {
 					gameWon();
@@ -39,7 +48,7 @@ $(document).ready(() => {
 
 		this.element.on("contextmenu", (e) => {
 			e.preventDefault();
-			if (!finished && !this.isChecked) {
+			if(!finished && !this.isChecked) {
 				this.isFlagged = !this.isFlagged;
 				if (this.isFlagged) {
 					this.element.html("<img src='./images/flag.png'>");
@@ -144,7 +153,7 @@ $(document).ready(() => {
 	}
 
 	function setBoard() {
-		diff = $("#difficulty").val();
+		diff = $("#mine-set").val();
 		for (i = 0; i < boardHeight; i++) {
 			board[i] = [];
 			for (j = 0; j < boardWidth; j++) {
@@ -152,15 +161,14 @@ $(document).ready(() => {
 			}
 		}
 		$("#grid").width(boardWidth * ($('.aTile').width() + 2));
-		setBombs();
-		setNumAll();
-		$('#mineCount').text(bombCount);
+		$('#mineCount').text(bombTotal);
+		$("#timer").text(0);						
 	}
 
 	setBoard();
 
 	$("#reset").on("click", () => {
-		let bombs = $('#difficulty').val();
+		let bombs = $('#mine-set').val();
 		let bWidth = Number($('#board-width').val());
 		let bHeight = Number($('#board-height').val());
 
@@ -186,24 +194,25 @@ $(document).ready(() => {
 
 		if (bombs > boardHeight * boardWidth) {
 			bombTotal = boardHeight * boardWidth;
-			$('#difficulty').val(bombTotal);
+			$('#mine-set').val(bombTotal);
 		} else if (bombs < 1) {
 			bombTotal = 1;
-			$('#difficulty').val(1);
+			$('#mine-set').val(1);
 		} else {
 			bombTotal = bombs;
 		}
 
 		bombCount = 0;
+		finished = false;
+		firstCheck = true;
 		$('.aTile').remove();
 		$('.ending').remove();
-		setBoard();
-		finished = false;
-		$('.aTile').css({ backgroundColor: 'gray' });
+		setBoard();		
+		$('.aTile').css({ backgroundColor: 'gray' });		
 	});
 
 	$("#show").on("click", () => {
-		showBoard();
+		!firstCheck && showBoard();	
 	});
 
 	$(".num-input").on("input", (e) => {
@@ -215,21 +224,29 @@ $(document).ready(() => {
 		var mode = $('input[name="mode"]:checked', '#mode-select').val();
 		switch(mode) {
 			case 'beginner':
-				$('#difficulty').val(10);
+				$('#mine-set').val(10);
 				$('#board-width').val(9);
 				$('#board-height').val(9);
 				break;
 			case 'intermediate':
-				$('#difficulty').val(40);
+				$('#mine-set').val(40);
 				$('#board-width').val(16);
 				$('#board-height').val(16);
 				break;
 			case 'expert':
-				$('#difficulty').val(99);
+				$('#mine-set').val(99);
 				$('#board-width').val(30);
 				$('#board-height').val(16);
 				break;
 		}
-	})
+	});
+
+	setInterval(() => {
+		if(!finished && !firstCheck) {
+			var currTime = moment();
+			var secondsPassed = Math.round(moment.duration(currTime.diff(startTime)).asSeconds());
+			$("#timer").text(secondsPassed);
+		}
+	}, 500)
 
 });
