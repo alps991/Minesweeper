@@ -4,8 +4,22 @@
 	margin: 0;
 }
 
+body {
+	font-family: Helvetica, Arial, sans-serif;
+}
+
 h1 {
 	text-align: center;
+	padding: 30px;
+}
+
+input[type="text"] {
+	width: 40px;
+	font-size: 15px;
+}
+
+a {
+	float: right;
 }
 
 .aTile {
@@ -16,6 +30,15 @@ h1 {
 	border: 1px solid black;
 	width: 30px;
 	height: 30px;
+}
+
+#container {
+	position: relative;
+}
+
+#main {
+	width: 1500px;
+	margin: 20px auto;
 }
 
 #grid {
@@ -30,5 +53,9 @@ h1 {
 }
 
 #controls {
-	width: 100%;
+	position: absolute;
+	display: inline-block;
+}
+
+#menu {
 }

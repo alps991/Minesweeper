@@ -1,24 +1,13 @@
 $(document).ready(() => {
 
 	var board = [];
-	var boardWidth = 9;
-	var boardHeight = 9;
-	var finished = false;
-	var bombCount = 0;
-	var bombTotal = 10;
-	var firstCheck = true;
+	var boardWidth;
+	var boardHeight;
+	var finished;
+	var bombCount;
+	var bombTotal;
+	var firstCheck;
 	var startTime;
-
-	function setBombs() {
-		while (bombCount < bombTotal) {
-			var y = Math.floor(Math.random() * boardWidth);
-			var x = Math.floor(Math.random() * boardHeight);
-			if (!board[x][y].isBomb && !board[x][y].isChecked) {
-				board[x][y].isBomb = true;
-				bombCount++;
-			}
-		}
-	}
 
 	function tile(x, y) {
 		this.xPos = x;
@@ -30,25 +19,27 @@ $(document).ready(() => {
 		this.element = $('<div class="aTile"></div>');
 		$("#grid").append(this.element);
 
-		this.element.on("click", () => {
-			if(firstCheck) {
-				this.isChecked = true;
-				setBombs();
-				setNumAll();
-				firstCheck = false;
-				startTime = moment();				
-			}
-			if(!finished && !this.isFlagged) {
-				checkTile(this);
-				if (checkWonGame() && !finished) {
-					gameWon();
+		this.element.on("mouseup", (e) => {
+			if (e.which == 1) {
+				if (firstCheck) {
+					this.isChecked = true;
+					setBombs();
+					setNumAll();
+					firstCheck = false;
+					startTime = moment();
+				}
+				if (!finished && !this.isFlagged) {
+					checkTile(this);
+					if (checkWonGame() && !finished) {
+						gameWon();
+					}
 				}
 			}
 		});
 
 		this.element.on("contextmenu", (e) => {
 			e.preventDefault();
-			if(!finished && !this.isChecked) {
+			if (!finished && !this.isChecked) {
 				this.isFlagged = !this.isFlagged;
 				if (this.isFlagged) {
 					this.element.html("<img src='./images/flag.png'>");
@@ -61,6 +52,17 @@ $(document).ready(() => {
 				}
 			}
 		});
+	}
+
+	function setBombs() {
+		while (bombCount < bombTotal) {
+			var y = Math.floor(Math.random() * boardWidth);
+			var x = Math.floor(Math.random() * boardHeight);
+			if (!board[x][y].isBomb && !board[x][y].isChecked) {
+				board[x][y].isBomb = true;
+				bombCount++;
+			}
+		}
 	}
 
 	function checkWonGame() {
@@ -117,7 +119,7 @@ $(document).ready(() => {
 			if (!finished) {
 				gameOver();
 			}
-		} else {
+		} else if (!tile.isFlagged) {
 			tile.element.text(tile.num);
 			if (tile.num == 0) {
 				var adj = adjacentTiles(tile);
@@ -153,7 +155,6 @@ $(document).ready(() => {
 	}
 
 	function setBoard() {
-		diff = $("#mine-set").val();
 		for (i = 0; i < boardHeight; i++) {
 			board[i] = [];
 			for (j = 0; j < boardWidth; j++) {
@@ -161,11 +162,10 @@ $(document).ready(() => {
 			}
 		}
 		$("#grid").width(boardWidth * ($('.aTile').width() + 2));
+		$("#grid").height(boardHeight * ($('.aTile').height() + 2));
 		$('#mineCount').text(bombTotal);
-		$("#timer").text(0);						
+		$("#timer").text(0);
 	}
-
-	setBoard();
 
 	$("#reset").on("click", () => {
 		let bombs = $('#mine-set').val();
@@ -207,12 +207,12 @@ $(document).ready(() => {
 		firstCheck = true;
 		$('.aTile').remove();
 		$('.ending').remove();
-		setBoard();		
-		$('.aTile').css({ backgroundColor: 'gray' });		
+		setBoard();
+		$('.aTile').css({ backgroundColor: 'gray' });
 	});
 
 	$("#show").on("click", () => {
-		!firstCheck && showBoard();	
+		!firstCheck && showBoard();
 	});
 
 	$(".num-input").on("input", (e) => {
@@ -222,7 +222,7 @@ $(document).ready(() => {
 
 	$("#mode-select").on("change", () => {
 		var mode = $('input[name="mode"]:checked', '#mode-select').val();
-		switch(mode) {
+		switch (mode) {
 			case 'beginner':
 				$('#mine-set').val(10);
 				$('#board-width').val(9);
@@ -241,8 +241,14 @@ $(document).ready(() => {
 		}
 	});
 
+	$("#options").click(() => {
+		$("#menu").slideToggle("slow");
+	})
+
+	$("#reset").trigger("click");
+
 	setInterval(() => {
-		if(!finished && !firstCheck) {
+		if (!finished && !firstCheck) {
 			var currTime = moment();
 			var secondsPassed = Math.round(moment.duration(currTime.diff(startTime)).asSeconds());
 			$("#timer").text(secondsPassed);
