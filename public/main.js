@@ -1,6 +1,6 @@
 $(document).ready(() => {
 
-	var board = [];
+	var board;
 	var boardWidth;
 	var boardHeight;
 	var finished;
@@ -44,7 +44,7 @@ $(document).ready(() => {
 		});
 
 		this.element.on("mousedown", (e) => {
-			if (e.which == 1 && !finished) {
+			if (e.which == 1 && !finished && !this.isChecked && !this.isFlagged) {
 				$(e.target).addClass("selected-tile")
 			} else if (e.which == 3) {
 				if (!finished && !this.isChecked && minesAreSet) {
@@ -63,7 +63,7 @@ $(document).ready(() => {
 		});
 
 		this.element.on("mouseover", (e) => {
-			if (mouseIsDown && !finished) {
+			if (mouseIsDown && !finished && !this.isChecked && !this.isFlagged) {
 				$(e.target).addClass("selected-tile");
 			}
 		});
@@ -71,6 +71,23 @@ $(document).ready(() => {
 		this.element.on("mouseleave", (e) => {
 			$(e.target).removeClass("selected-tile");
 		});
+	}
+
+	function setBoard() {
+		board = [];
+		for (i = 0; i < boardHeight; i++) {
+			board[i] = [];
+			for (j = 0; j < boardWidth; j++) {
+				board[i][j] = new tile(i, j);
+			}
+		}
+
+		minesAreSet = false;
+		$("#show").removeClass("active");
+		$("#grid").width(boardWidth * ($('.aTile').width() + 2));
+		$("#grid").height(boardHeight * ($('.aTile').height() + 2));
+		$('#mineCount').text(bombTotal);
+		$("#timer").text(0);
 	}
 
 	function setBombs() {
@@ -97,11 +114,24 @@ $(document).ready(() => {
 		return true;
 	}
 
+	function adjacentTiles(tile) {
+		answer = [];
+		for (k = tile.xPos - 1; k <= tile.xPos + 1; k++) {
+			for (l = tile.yPos - 1; l <= tile.yPos + 1; l++) {
+				if (k >= 0 && k < board.length && l >= 0 && l < board[0].length) {
+					if (!(tile.xPos == k && tile.yPos == l)) {
+						answer.push(board[k][l]);
+					}
+				}
+			}
+		}
+		return answer;
+	}
+
 	function countBorderingMines(x, y) {
 		total = 0;
 		if (board[x][y].isBomb != true) {
 			adj = adjacentTiles(board[x][y]);
-			console.log(adj);
 			for (let i = 0; i < adj.length; i++) {
 				if (adj[i].isBomb) {
 					total++;
@@ -117,21 +147,6 @@ $(document).ready(() => {
 				board[i][j].num = countBorderingMines(i, j);
 			}
 		}
-	}
-
-	function gameOver() {
-		$(document.documentElement).append($('<p class="ending">You Lose</p>'));
-		finished = true;
-		$('.aTile').css({ backgroundColor: 'red' });
-		showBoard();
-	}
-
-	function gameWon() {
-		$(document.documentElement).append($('<p class="ending">You Win!</p>'));
-		finished = true;
-		$('.aTile').css({ backgroundColor: 'green' });
-		showBoard();
-		$('#mineCount').text(0);
 	}
 
 	function checkTile(tile) {
@@ -154,20 +169,6 @@ $(document).ready(() => {
 		}
 	}
 
-	function adjacentTiles(tile) {
-		answer = [];
-		for (k = tile.xPos - 1; k <= tile.xPos + 1; k++) {
-			for (l = tile.yPos - 1; l <= tile.yPos + 1; l++) {
-				if (k >= 0 && k < board.length && l >= 0 && l < board[0].length) {
-					if (!(tile.xPos == k && tile.yPos == l)) {
-						answer.push(board[k][l]);
-					}
-				}
-			}
-		}
-		return answer;
-	}
-
 	function showBoard() {
 		for (var i = 0; i < board.length; i++) {
 			for (var j = 0; j < board[0].length; j++) {
@@ -176,20 +177,19 @@ $(document).ready(() => {
 		}
 	}
 
-	function setBoard() {
-		for (i = 0; i < boardHeight; i++) {
-			board[i] = [];
-			for (j = 0; j < boardWidth; j++) {
-				board[i][j] = new tile(i, j);
-			}
-		}
+	function gameOver() {
+		$(document.documentElement).append($('<p class="ending">You Lose</p>'));
+		finished = true;
+		$('.aTile').css({ backgroundColor: 'red' });
+		showBoard();
+	}
 
-		minesAreSet = false;
-		$("#show").removeClass("active");
-		$("#grid").width(boardWidth * ($('.aTile').width() + 2));
-		$("#grid").height(boardHeight * ($('.aTile').height() + 2));
-		$('#mineCount').text(bombTotal);
-		$("#timer").text(0);
+	function gameWon() {
+		$(document.documentElement).append($('<p class="ending">You Win!</p>'));
+		finished = true;
+		$('.aTile').css({ backgroundColor: 'green' });
+		showBoard();
+		$('#mineCount').text(0);
 	}
 
 	$("#reset").on("click", () => {

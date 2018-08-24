@@ -72,6 +72,11 @@ button:disabled {
 	border: 2px solid black;
 }
 
+.ending {
+	font-size: 20px;
+	text-align: center;
+}
+
 #container {
 	display: flex;
 	flex-direction: column;
