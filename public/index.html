@@ -17,15 +17,6 @@
 
 		<div id="container">
 			<div id="controls">
-				<button id="reset">Reset</button>
-				<button id="show">Show Board</button>
-				<p>Time:
-					<span id="timer"></span>
-				</p>
-				<p>
-					Remaining Mines:
-					<span id="mineCount"></span>
-				</p>
 				<div id="menu">
 					<form id="mode-select">
 						<input type="radio" name="mode" value="beginner" id="beginner" checked>
@@ -40,18 +31,31 @@
 						<input type="radio" name="mode" value="custom" id="custom">
 						<label for="custom">Custom</label>
 					</form>
-					<div>
-						Select Number of Mines:
-						<input class="num-input" id="mine-set" type="text" value="10">
+					<div id="board-settings">
+						<div>
+							Mines:
+							<input class="num-input" id="mine-set" type="text" value="10">
+						</div>
+						<div>
+							Width:
+							<input class="num-input" id="board-width" type="text" value="9">
+						</div>
+						<div>
+							Height:
+							<input class="num-input" id="board-height" type="text" value="9">
+						</div>
 					</div>
-					<div>
-						Select Width of Board:
-						<input class="num-input" id="board-width" type="text" value="9">
-					</div>
-					<div>
-						Select Height of Board:
-						<input class="num-input" id="board-height" type="text" value="9">
-					</div>
+				</div>
+				<button id="reset" class="active">Reset</button>
+				<button id="show" class="active">Show Board</button>
+				<div id="counters">
+					<p>Time:
+						<span id="timer"></span>
+					</p>
+					<p>
+						Remaining Mines:
+						<span id="mineCount"></span>
+					</p>
 				</div>
 			</div>
 

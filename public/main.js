@@ -8,6 +8,7 @@ $(document).ready(() => {
 	var bombTotal;
 	var firstCheck;
 	var startTime;
+	var minesAreSet;
 
 	function tile(x, y) {
 		this.xPos = x;
@@ -35,22 +36,40 @@ $(document).ready(() => {
 					}
 				}
 			}
+			$(e.target).removeClass("selected-tile");
 		});
 
 		this.element.on("contextmenu", (e) => {
 			e.preventDefault();
-			if (!finished && !this.isChecked) {
-				this.isFlagged = !this.isFlagged;
-				if (this.isFlagged) {
-					this.element.html("<img src='./images/flag.png'>");
-					bombCount--;
-					$('#mineCount').text(bombCount);
-				} else {
-					this.element.html("");
-					bombCount++;
-					$('#mineCount').text(bombCount);
+		});
+
+		this.element.on("mousedown", (e) => {
+			if (e.which == 1 && !finished) {
+				$(e.target).addClass("selected-tile")
+			} else if (e.which == 3) {
+				if (!finished && !this.isChecked && minesAreSet) {
+					this.isFlagged = !this.isFlagged;
+					if (this.isFlagged) {
+						this.element.html("<img src='./images/flag.png'>");
+						bombCount--;
+						$('#mineCount').text(bombCount);
+					} else {
+						this.element.html("");
+						bombCount++;
+						$('#mineCount').text(bombCount);
+					}
 				}
 			}
+		});
+
+		this.element.on("mouseover", (e) => {
+			if (mouseIsDown && !finished) {
+				$(e.target).addClass("selected-tile");
+			}
+		});
+
+		this.element.on("mouseleave", (e) => {
+			$(e.target).removeClass("selected-tile");
 		});
 	}
 
@@ -63,6 +82,8 @@ $(document).ready(() => {
 				bombCount++;
 			}
 		}
+		minesAreSet = true;
+		$("#show").addClass("active");
 	}
 
 	function checkWonGame() {
@@ -80,6 +101,7 @@ $(document).ready(() => {
 		total = 0;
 		if (board[x][y].isBomb != true) {
 			adj = adjacentTiles(board[x][y]);
+			console.log(adj);
 			for (let i = 0; i < adj.length; i++) {
 				if (adj[i].isBomb) {
 					total++;
@@ -161,6 +183,9 @@ $(document).ready(() => {
 				board[i][j] = new tile(i, j);
 			}
 		}
+
+		minesAreSet = false;
+		$("#show").removeClass("active");
 		$("#grid").width(boardWidth * ($('.aTile').width() + 2));
 		$("#grid").height(boardHeight * ($('.aTile').height() + 2));
 		$('#mineCount').text(bombTotal);
@@ -192,8 +217,8 @@ $(document).ready(() => {
 			boardHeight = bHeight;
 		}
 
-		if (bombs > boardHeight * boardWidth) {
-			bombTotal = boardHeight * boardWidth;
+		if (bombs >= boardHeight * boardWidth) {
+			bombTotal = boardHeight * boardWidth - 1;
 			$('#mine-set').val(bombTotal);
 		} else if (bombs < 1) {
 			bombTotal = 1;
@@ -246,6 +271,14 @@ $(document).ready(() => {
 	})
 
 	$("#reset").trigger("click");
+
+	var mouseIsDown = false;
+
+	$(document).mousedown((e) => {
+		if (e.which == 1) { mouseIsDown = true; }
+	}).mouseup(() => {
+		mouseIsDown = false;
+	});
 
 	setInterval(() => {
 		if (!finished && !firstCheck) {
