@@ -9,6 +9,10 @@ $(document).ready(() => {
 	var firstCheck;
 	var startTime;
 	var minesAreSet;
+	var mode;
+	var modeSet;
+	var secondsPassed;
+	var bestTimes = [[], [], []];
 
 	function tile(x, y) {
 		this.xPos = x;
@@ -190,6 +194,17 @@ $(document).ready(() => {
 		$('.aTile').css({ backgroundColor: 'green' });
 		showBoard();
 		$('#mineCount').text(0);
+		bestTimes[modeSet].push(secondsPassed);
+		bestTimes[modeSet].sort((a,b) => a - b);
+		updateLeaderboard();
+	}
+
+	function updateLeaderboard() {
+		for(var i = 0; i < bestTimes.length; i++) {
+			for(var j = 0; j < bestTimes[i].length; j++) {
+				$("td").get((j + 1) * 3).innerHTML = (j + 1) + '. ' + bestTimes[i][j];
+			}
+		}
 	}
 
 	$("#reset").on("click", () => {
@@ -227,6 +242,7 @@ $(document).ready(() => {
 			bombTotal = bombs;
 		}
 
+		modeSet = mode || 0;
 		bombCount = 0;
 		finished = false;
 		firstCheck = true;
@@ -246,23 +262,28 @@ $(document).ready(() => {
 	});
 
 	$("#mode-select").on("change", () => {
-		var mode = $('input[name="mode"]:checked', '#mode-select').val();
-		switch (mode) {
+		var selected = $('input[name="mode"]:checked', '#mode-select').val();
+		switch (selected) {
 			case 'beginner':
 				$('#mine-set').val(10);
 				$('#board-width').val(9);
 				$('#board-height').val(9);
+				mode = 0;
 				break;
 			case 'intermediate':
 				$('#mine-set').val(40);
 				$('#board-width').val(16);
 				$('#board-height').val(16);
+				mode = 1;
 				break;
 			case 'expert':
 				$('#mine-set').val(99);
 				$('#board-width').val(30);
 				$('#board-height').val(16);
+				mode = 2;
 				break;
+			default:
+				mode = 3;
 		}
 	});
 
@@ -283,9 +304,13 @@ $(document).ready(() => {
 	setInterval(() => {
 		if (!finished && !firstCheck) {
 			var currTime = moment();
-			var secondsPassed = Math.round(moment.duration(currTime.diff(startTime)).asSeconds());
+			secondsPassed = Math.round(moment.duration(currTime.diff(startTime)).asSeconds());
 			$("#timer").text(secondsPassed);
 		}
 	}, 500)
+
+	$('#win').click(() => {
+		gameWon();
+	})
 
 });
