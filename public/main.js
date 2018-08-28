@@ -182,27 +182,32 @@ $(document).ready(() => {
 	}
 
 	function gameOver() {
-		$(document.documentElement).append($('<p class="ending">You Lose</p>'));
+		$('#ending').append($('<p class="ending">You Lose</p>'));
 		finished = true;
 		$('.aTile').css({ backgroundColor: 'red' });
 		showBoard();
 	}
 
 	function gameWon() {
-		$(document.documentElement).append($('<p class="ending">You Win!</p>'));
+		$('#ending').append($('<p class="ending">You Win!</p>'));
 		finished = true;
 		$('.aTile').css({ backgroundColor: 'green' });
 		showBoard();
 		$('#mineCount').text(0);
-		bestTimes[modeSet].push(secondsPassed);
-		bestTimes[modeSet].sort((a,b) => a - b);
-		updateLeaderboard();
+		if (modeSet < 3) {
+			bestTimes[modeSet].push(secondsPassed);
+			bestTimes[modeSet].sort((a, b) => a - b);
+			if (bestTimes[modeSet].length > 3) {
+				bestTimes[modeSet] = bestTimes[modeSet].slice(0, 3);
+			}
+			updateLeaderboard();
+		}
 	}
 
 	function updateLeaderboard() {
-		for(var i = 0; i < bestTimes.length; i++) {
-			for(var j = 0; j < bestTimes[i].length; j++) {
-				$("td").get((j + 1) * 3).innerHTML = (j + 1) + '. ' + bestTimes[i][j];
+		for (var i = 0; i < bestTimes.length; i++) {
+			for (var j = 0; j < bestTimes[i].length; j++) {
+				$("td").get(j * 3 + i).innerHTML = (j + 1) + '. ' + bestTimes[i][j];
 			}
 		}
 	}
@@ -309,8 +314,8 @@ $(document).ready(() => {
 		}
 	}, 500)
 
-	$('#win').click(() => {
-		gameWon();
-	})
+	// $('#win').click(() => {
+	// 	gameWon();
+	// })
 
 });

@@ -14,11 +14,12 @@
 	<div id="main">
 		<a href="https://github.com/alps991/Minesweeper" target="_blank">Source Code</a>
 		<h1>Minesweeper</h1>
-		<button id='win'>win</button>
+
 		<div id="container">
+			<!-- <button id='win'>win</button> -->
 			<div id="controls">
 				<div id="menu">
-					<form id="mode-select">
+					<form id="mode-select" autocomplete="off">
 						<input type="radio" name="mode" value="beginner" id="beginner" checked>
 						<label for="beginner">Beginner</label>
 						<br>
@@ -34,15 +35,15 @@
 					<div id="board-settings">
 						<div>
 							Mines:
-							<input class="num-input" id="mine-set" type="text" value="10">
+							<input class="num-input" autocomplete="off" id="mine-set" type="text" value="10">
 						</div>
 						<div>
 							Width:
-							<input class="num-input" id="board-width" type="text" value="9">
+							<input class="num-input" autocomplete="off" id="board-width" type="text" value="9">
 						</div>
 						<div>
 							Height:
-							<input class="num-input" id="board-height" type="text" value="9">
+							<input class="num-input" autocomplete="off" id="board-height" type="text" value="9">
 						</div>
 					</div>
 				</div>
@@ -60,12 +61,12 @@
 			</div>
 
 			<div id="grid"></div>
-
+			<div id="ending"></div>
 			<table id="high-scores">
 				<tr>
-					<td>Beginner</td>
-					<td>Intermediate</td>
-					<td>Expert</td>
+					<th>Beginner</th>
+					<th>Intermediate</th>
+					<th>Expert</th>
 				</tr>
 				<tr id="first">
 					<td>1.</td>
