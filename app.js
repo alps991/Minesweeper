@@ -12,10 +12,12 @@ const port = process.env.PORT || 3000;
 
 app.use(morgan('dev'));
 app.use(responseTime());
-app.use(bodyParser());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(compress());
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+const sequelize = new Sequelize(process.env.DATABASE_URL);
 
 app.listen(port, () => {
     console.log('server started on port: ' + port);
