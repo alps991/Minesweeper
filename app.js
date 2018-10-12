@@ -35,21 +35,20 @@ sequelize
         console.error('Unable to connect to the database:', err);
     });
 
-const User = sequelize.define('user', {
-    firstName: {
+const Game = sequelize.define('game', {
+    player: {
         type: Sequelize.STRING
     },
-    lastName: {
-        type: Sequelize.STRING
+    time: {
+        type: Sequelize.INTEGER
     }
 });
 
-// force: true will drop the table if it already exists
+
 User.sync({ force: true }).then(() => {
-    // Table created
-    return User.create({
-        firstName: 'John',
-        lastName: 'Hancock'
+    return Game.create({
+        player: 'John',
+        time: 23
     });
 });
 
